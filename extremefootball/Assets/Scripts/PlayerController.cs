@@ -37,4 +37,13 @@ public class PlayerController : MonoBehaviour
         velocity.y += gravity * Time.deltaTime;
         player.Move(velocity * Time.deltaTime);
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("ammo"))
+        {
+            Debug.Log("POWEEER!");
+            Destroy(other.gameObject);
+        }
+    }
 }

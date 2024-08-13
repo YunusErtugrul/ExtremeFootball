@@ -5,19 +5,19 @@ using UnityEngine;
 
 public class Gun : MonoBehaviour
 {
-    private float distance = 100f;
+    private float distance = 150f;
 
     public Camera mainCamera;
     public ParticleSystem shotPartical;
     public AudioSource shotSound;
     public GameObject impactEffect;
 
-    private Rigidbody footballBall;
+    public Rigidbody footballBall;
     private float ballSpeed = -250;
     // Start is called before the first frame update
     void Start()
     {
-        footballBall = GameObject.Find("Ball").GetComponentInParent<Rigidbody>();
+        //footballBall = GameObject.Find("Ball").GetComponentInParent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -32,7 +32,7 @@ public class Gun : MonoBehaviour
     void GunShoot()
     {
         RaycastHit hit; 
-        if (Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out hit, Mathf.Infinity))
+        if (Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out hit, distance))
         {
             shotSound.Play();
             shotPartical.Play();
