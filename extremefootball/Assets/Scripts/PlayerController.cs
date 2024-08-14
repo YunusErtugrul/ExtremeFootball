@@ -16,6 +16,13 @@ public class PlayerController : MonoBehaviour
 
     private float gravity = -19.65f;
     Vector3 velocity;
+
+    private float ballPowerUp;
+
+    public void Start()
+    {
+        ballPowerUp = GameObject.Find("pistols").GetComponent<Gun>().ballSpeed;
+    }
     // Update is called once per frame
     void Update()
     {
@@ -43,6 +50,7 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.CompareTag("ammo"))
         {
             Debug.Log("POWEEER!");
+            ballPowerUp = -500f;
             Destroy(other.gameObject);
         }
     }
