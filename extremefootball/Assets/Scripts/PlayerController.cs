@@ -18,6 +18,14 @@ public class PlayerController : MonoBehaviour
     Vector3 velocity;
 
     private float ballPowerUp;
+    public bool ballPowerActive = false;
+
+    [SerializeField] private float dashDuration = 0.2f;
+    [SerializeField] private float dashCooldown = 1f;
+    [SerializeField] private float dashPower = 10f;
+    private bool isDashing = false;
+    private float lastDashTime = -Mathf.Infinity;
+    public bool dashActive = false;
 
     public void Start()
     {
@@ -37,21 +45,57 @@ public class PlayerController : MonoBehaviour
         }
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
-
+        
         Vector3 move = transform.right * x + transform.forward * z;
         player.Move(move * speed * Time.deltaTime);
 
         velocity.y += gravity * Time.deltaTime;
         player.Move(velocity * Time.deltaTime);
+
+        if (isGround == false && Input.GetKeyDown(KeyCode.LeftShift) && !isDashing && Time.time >= lastDashTime + dashCooldown && dashActive)
+        {
+            StartCoroutine(Dash());
+            dashActive = false;
+        }
     }
 
-    private void OnTriggerEnter(Collider other)
+    IEnumerator Dash()
+    {
+        isDashing = true;
+        lastDashTime = Time.time;
+        Vector3 dashMove = Camera.main.transform.forward.normalized * dashPower;
+        float elapsedTime = 0f;
+
+        while (elapsedTime < dashDuration)
+        {
+            player.Move(dashMove * (Time.deltaTime / dashDuration));
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        isDashing = false;
+        Debug.Log("Dash completed!");
+    }
+
+    public void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("ammo"))
         {
-            Debug.Log("POWEEER!");
-            ballPowerUp = -500f;
+            StartCoroutine(reloadTime());
+            Debug.Log("Relodingg!");
             Destroy(other.gameObject);
         }
+        if (other.gameObject.CompareTag("boost"))
+        {
+            dashActive = true;
+            Destroy(other.gameObject);
+        }
+    }
+
+    IEnumerator reloadTime()
+    {
+        ballPowerActive = true;
+        yield return new WaitForSeconds(6);
+        ballPowerActive = false;
     }
 }

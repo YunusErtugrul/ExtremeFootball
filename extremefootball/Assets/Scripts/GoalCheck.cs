@@ -21,9 +21,16 @@ public class GoalCheck : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("goal"))
         {
-            firework.Play();
-            Destroy(this.gameObject);
+            Instantiate(firework, gameObject.transform);
+            StartCoroutine(waitGoal());
             Debug.Log("Gooool!");
         }
+    }
+
+    IEnumerator waitGoal()
+    {
+        
+        yield return new WaitForSeconds(0.5f);
+        Destroy(this.gameObject);
     }
 }

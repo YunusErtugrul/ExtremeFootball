@@ -13,6 +13,12 @@ public class Gun : MonoBehaviour
     public AudioSource shotSound;
     public GameObject impactEffect;
 
+    public int curruentAmmo = 10;
+    public int maxAmmo = 15;
+    public float reloadTime = 1f;
+    private bool isReload = false;
+    public Animator animator;
+
     public LineRenderer lineRenderer;
     private Vector3 targetPosition;
     private bool isMoving = false;
@@ -31,10 +37,6 @@ public class Gun : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetButtonDown("Fire1"))
-        {
-            GunShoot();
-        }
         if(Input.GetMouseButtonDown(1))
         {
             Rope();
@@ -47,11 +49,23 @@ public class Gun : MonoBehaviour
         {
             StopRope();
         }
+        if (isReload)
+            return;
+        if (player.GetComponent<PlayerController>().ballPowerActive == true && curruentAmmo <= 0)
+        {
+            StartCoroutine(Reload());
+            return;
+        }
+        if (Input.GetButtonDown("Fire1"))
+        {
+            GunShoot();
+        }
     }
 
     void GunShoot()
     {
-        if (Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out hit, distance))
+        curruentAmmo--;
+        if (Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out hit, distance) && curruentAmmo > 0)
         {
             shotSound.Play();
             shotPartical.Play();
@@ -66,6 +80,17 @@ public class Gun : MonoBehaviour
             Destroy(impact, 2f);
         }
         
+    }
+
+    public IEnumerator Reload()
+    {
+        isReload = true;
+        Debug.Log("Reloding!");
+        animator.SetBool("reload", true);
+        yield return new WaitForSeconds(reloadTime);
+        curruentAmmo = maxAmmo;
+        isReload = false;
+        animator.SetBool("reload", false);
     }
 
     void Rope()

@@ -5,7 +5,8 @@ using UnityEngine;
 public class SpawnManager : MonoBehaviour
 {
     public GameObject footballBall;
-    public GameObject powerUp;
+    public GameObject ammo;
+    public GameObject dash;
 
     private float xRange = 10;
 
@@ -24,6 +25,14 @@ public class SpawnManager : MonoBehaviour
         {
             Spawner(waveCount);
         }
+        if (GameObject.FindGameObjectsWithTag("ammo").Length == 0)
+        {
+            Instantiate(ammo, RandomPosition(), ammo.transform.rotation);
+        }
+        if (GameObject.FindGameObjectsWithTag("boost").Length == 0)
+        {
+            Instantiate(dash, RandomPosition(), dash.transform.rotation);
+        }
     }
 
     Vector3 RandomPosition()
@@ -35,10 +44,7 @@ public class SpawnManager : MonoBehaviour
 
     void Spawner(int enemiesToSpawn)
     {
-        if(GameObject.FindGameObjectsWithTag("ammo").Length == 0)
-        {
-            Instantiate(powerUp, RandomPosition(), powerUp.transform.rotation);
-        }
+
         for (int i = 0; i < waveCount; i++)
         {
             Instantiate(footballBall, RandomPosition(), footballBall.transform.rotation);
